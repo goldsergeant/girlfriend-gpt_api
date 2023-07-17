@@ -176,3 +176,5 @@ SWAGGER_SETTINGS = {
 }
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+AUTH_USER_MODEL = 'account.User'
