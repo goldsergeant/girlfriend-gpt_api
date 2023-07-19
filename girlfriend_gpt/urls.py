@@ -2,21 +2,11 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 
-# from account.urls import CustomizedOpenAPISchemaGenerator
+from account.urls import  schema_view
 from girlfriend_gpt import settings
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
-schema_view = get_schema_view(openapi.Info(
-    title="GirlfriendGPT API",
-    default_version='v1',
-    description="Test description",
-
-),
-    public=True,
-    # generator_class=CustomizedOpenAPISchemaGenerator,
-    permission_classes=[permissions.AllowAny]
-)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
