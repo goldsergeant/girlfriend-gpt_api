@@ -38,5 +38,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('signin/',TokenObtainPairView.as_view()),
     path('signin/',MyTokenObtainPairView.as_view()),
-    path('signup/', UserSignupView.as_view()),
+    path('signup/', UserSignupView.as_view(),name='signup'),
 ]
