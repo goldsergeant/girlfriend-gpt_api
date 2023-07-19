@@ -25,15 +25,13 @@ class SignupTestCase(TestCase):
     def test_signup_success(self):
         response = self.client.post(
             self.url,
-            data=json.dumps(self.valid_data),
+            data=self.valid_data,
             content_type='application/json',
         )
         # Check the response status code
         self.assertEqual(response.status_code, 201)
-
         # Check the user count in the database
-        user_count = User.objects.count()
-        self.assertEqual(user_count, 1)
+        self.assertEqual(User.objects.count(), 1)
 
         # Check if the user is created with the correct username
         created_user = User.objects.get(username=self.valid_data['username'])

@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model, authenticate
 from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework_jwt.serializers import User
 from django.core.validators import validate_email
 from rest_framework import status, exceptions
 from django.utils.translation import gettext_lazy as _
@@ -28,7 +27,8 @@ class UserJWTSignupSerializer(serializers.ModelSerializer):
     )
 
     name = serializers.CharField(
-        required=False
+        required=False,
+        write_only=True
     )
 
     subscription_date = serializers.DateField(

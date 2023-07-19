@@ -12,6 +12,7 @@ from account.serializers import UserJWTSignupSerializer, MyTokenObtainPairSerial
 
 # Create your views here.
 class UserSignupView(APIView):
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(request_body=UserJWTSignupSerializer)
     def post(self,request):
