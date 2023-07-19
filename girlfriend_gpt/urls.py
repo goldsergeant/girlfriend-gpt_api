@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 
-from account.urls import CustomizedOpenAPISchemaGenerator
+# from account.urls import CustomizedOpenAPISchemaGenerator
 from girlfriend_gpt import settings
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -14,7 +14,7 @@ schema_view = get_schema_view(openapi.Info(
 
 ),
     public=True,
-    generator_class=CustomizedOpenAPISchemaGenerator,
+    # generator_class=CustomizedOpenAPISchemaGenerator,
     permission_classes=[permissions.AllowAny]
 )
 
