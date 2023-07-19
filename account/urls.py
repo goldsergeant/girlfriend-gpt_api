@@ -4,8 +4,7 @@ from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView,TokenObtainPairView
-from account.views import UserSignupView
-
+from account.views import UserSignupView, MyTokenObtainPairView
 
 # class CustomizedOpenAPISchemaGenerator(OpenAPISchemaGenerator):
 #     def get_paths(self, endpoints, components, request, public):
@@ -36,10 +35,8 @@ from account.views import UserSignupView
 #         return self.get_paths_object(paths), prefix
 
 urlpatterns = [
-    path('token/',TokenObtainPairView.as_view(),name='token_obtain'),
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # 로그인/회원가입
-    # path('singin/', views.JWTLoginView.as_view()),
+    # path('signin/',TokenObtainPairView.as_view()),
+    path('signin/',MyTokenObtainPairView.as_view()),
     path('signup/', UserSignupView.as_view()),
 ]

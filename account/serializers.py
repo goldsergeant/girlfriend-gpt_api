@@ -1,11 +1,17 @@
 import datetime
 
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.http import JsonResponse
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_jwt.serializers import User
 from django.core.validators import validate_email
+from rest_framework import status, exceptions
+from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
+from django.contrib.auth import authenticate
+
 
 User = get_user_model()
 
@@ -52,7 +58,7 @@ class UserJWTSignupSerializer(serializers.ModelSerializer):
         email = validated_data.get('email', None)
 
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError("user already exists")
+            raise AuthenticationFailed(detail="user already exists")
 
         try:
             validate_email(email)
@@ -64,3 +70,15 @@ class UserJWTSignupSerializer(serializers.ModelSerializer):
 
         return validated_data
 
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        if not User.objects.filter(email=attrs['email']).exists():
+            raise AuthenticationFailed(detail='user is not exist')
+        elif authenticate(username="john", password="secret") is None:
+            raise AuthenticationFailed(detail='password is not valid')
+
+        data = super().validate(attrs)
+
+        # Add extra responses here
+        return data
