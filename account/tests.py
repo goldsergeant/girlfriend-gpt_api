@@ -14,7 +14,7 @@ from django.urls import reverse
 from account.models import User
 
 
-class SignupTestCase(TestCase):
+class SignupTestCase(APITestCase):
     def setUp(self):
         self.url = reverse('signup')  # Replace 'signup' with the name of your signup view in urlpatterns
         self.valid_data = {
@@ -26,7 +26,7 @@ class SignupTestCase(TestCase):
         response = self.client.post(
             self.url,
             data=self.valid_data,
-            content_type='application/json',
+            format='json',
         )
         # Check the response status code
         self.assertEqual(response.status_code, 201)
@@ -34,16 +34,16 @@ class SignupTestCase(TestCase):
         self.assertEqual(User.objects.count(), 1)
 
         # Check if the user is created with the correct username
-        created_user = User.objects.get(username=self.valid_data['username'])
+        created_user = User.objects.get(email=self.valid_data['email'])
         self.assertIsNotNone(created_user)
 
     def test_signup_fail_email_invalid(self):
         data = self.valid_data.copy()
-        data['password_confirm'] = 'wrongpassword'
+        data['email']='testexample.com'
         response = self.client.post(
             self.url,
-            data=json.dumps(data),
-            content_type='application/json',
+            data=data,
+            format='json'
         )
         # Check the response status code
         self.assertEqual(response.status_code, 400)
@@ -52,5 +52,15 @@ class SignupTestCase(TestCase):
         user_count = User.objects.count()
         self.assertEqual(user_count, 0)
 
-    # 여기에 추가 실패 테스트 케이스를 작성하세요.
-    # (예: 사용자 이름이 없는 경우, 이미 사용 중인 이메일, 등록하지 않은 항목 등)
+    def test_signup_in_already_exist(self):
+        user=User(email=self.valid_data['email'])
+        user.save()
+
+        response = self.client.post(
+            self.url,
+            data=self.valid_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code,401)
+        self.assertEqual(User.objects.count(),1)
