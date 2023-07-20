@@ -7,7 +7,9 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed, TokenError, InvalidToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.http import JsonResponse
-from account.serializers import UserJWTSignupSerializer, MyTokenObtainPairSerializer
+
+from account.models import User
+from account.serializers import UserJWTSignupSerializer, MyTokenObtainPairSerializer,PasswordChangeSerializer
 
 
 # Create your views here.
@@ -20,6 +22,17 @@ class UserSignupView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save() # DB 저장
             return Response(serializer.data, status=201)
+
+class UserPasswordChangeView(APIView):
+    permission_classes=[AllowAny]
+
+    @swagger_auto_schema(request_body=PasswordChangeSerializer)
+    def put(self,request):
+        serializer=PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user=User.objects.get(email=request.data['email'])
+            serializer.update(instance=user,validated_data=request.data)
+            return JsonResponse({'messages':'password is changed'},status=200)
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer

@@ -75,10 +75,38 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         if not User.objects.filter(email=attrs['email']).exists():
             raise AuthenticationFailed(detail='user is not exist')
-        elif authenticate(username="john", password="secret") is None:
+        elif authenticate(username=attrs['email'], password=attrs['password']) is None:
             raise AuthenticationFailed(detail='password is not valid')
 
         data = super().validate(attrs)
 
         # Add extra responses here
+        return data
+
+class PasswordChangeSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        write_only=True
+    )
+
+    password = serializers.CharField(
+        required=True,
+        write_only=True,
+        style={'input_type': 'password'}
+    )
+
+    class Meta(object):
+        model = User
+        fields = ['email', 'password']
+
+    def update(self, instance:User, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
+
+    def validate(self, data):
+        email = data.get('email', None)
+        if not User.objects.filter(email=email).exists():
+            raise AuthenticationFailed(detail="user is not exists")
+
         return data
