@@ -89,18 +89,24 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
-    password = serializers.CharField(
+    old_password = serializers.CharField(
         required=True,
         write_only=True,
         style={'input_type': 'password'}
     )
 
+    new_password = serializers.CharField(
+        required=True,
+        write_only=True,
+        style={'input_type':'password'}
+    )
+
     class Meta(object):
         model = User
-        fields = ['email', 'password']
+        fields=['email','new_password','old_password']
 
     def update(self, instance:User, validated_data):
-        instance.set_password(validated_data['password'])
+        instance.set_password(validated_data['new_password'])
         instance.save()
         return instance
 
@@ -108,5 +114,7 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         email = data.get('email', None)
         if not User.objects.filter(email=email).exists():
             raise AuthenticationFailed(detail="user is not exists")
+        if not authenticate(username=data['email'],password=data['old_password']):
+            raise ValidationError(detail='password is not correct')
 
         return data
