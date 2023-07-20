@@ -14,6 +14,8 @@ from pathlib import Path
 import django
 from django.utils.translation import gettext
 import os
+import json
+import sys
 
 django.utils.translation.ugettext = gettext
 
@@ -179,3 +181,4 @@ SWAGGER_SETTINGS = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 AUTH_USER_MODEL = 'account.User'
+
