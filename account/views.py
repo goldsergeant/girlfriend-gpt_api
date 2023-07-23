@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -16,7 +17,10 @@ from account.serializers import UserJWTSignupSerializer, MyTokenObtainPairSerial
 class UserSignupView(APIView):
     permission_classes = [AllowAny]
 
-    @swagger_auto_schema(request_body=UserJWTSignupSerializer)
+    @extend_schema(
+        request=UserJWTSignupSerializer,
+        responses={201: UserJWTSignupSerializer},
+    )
     def post(self,request):
         serializer = UserJWTSignupSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -24,6 +28,7 @@ class UserSignupView(APIView):
             return Response(serializer.data, status=201)
 
 class UserNameUpdateView(APIView):
+    @extend_schema(request=UserJWTSignupSerializer)
     def put(self,request):
         serialzier=UserJWTSignupSerializer(data=request.data)
         user=request.user
@@ -32,7 +37,7 @@ class UserNameUpdateView(APIView):
 class UserPasswordChangeView(APIView):
     permission_classes=[AllowAny]
 
-    @swagger_auto_schema(request_body=PasswordChangeSerializer)
+    @extend_schema(request=PasswordChangeSerializer)
     def put(self,request):
         serializer=PasswordChangeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
