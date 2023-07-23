@@ -24,4 +24,4 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"From {self.from_user.name} to {self.to_character.username}: {self.content} [{self.timestamp}]"
+        return f"From {self.from_user.name} to {self.to_character.name}: {self.content} [{self.timestamp}]"
