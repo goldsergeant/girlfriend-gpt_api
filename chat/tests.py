@@ -1,5 +1,6 @@
 import os
 
+import openai
 from django.test import TestCase
 import environ
 
@@ -22,3 +23,21 @@ class GetEnvTest(TestCase):
         OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')  # 기본 사용방법
         print(OPENAI_API_KEY)
         self.assertIsNotNone(OPENAI_API_KEY)
+
+
+class OpenAiMessageTest(TestCase):
+
+    def test_message_response(self):
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-0613",
+            temperature=0.9,
+            top_p=1,
+            frequency_penalty=0.5,
+            presence_penalty=0.5,
+            messages=[
+                {"role": "user", "content": "This is a test."},
+            ]
+        )
+        print(response['choices'][0]['message']['content'])
+        self.assertIsNotNone(response)
+        self.assertIs(type(response['choices'][0]['message']['content']), str)
