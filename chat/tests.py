@@ -35,9 +35,10 @@ class OpenAiMessageTest(TestCase):
             frequency_penalty=0.5,
             presence_penalty=0.5,
             messages=[
+                {"role":"system","content":'you are a test bot. answer include test'},
                 {"role": "user", "content": "This is a test."},
-            ]
+            ],
         )
-        print(response['choices'][0]['message']['content'])
+        print(response)
         self.assertIsNotNone(response)
         self.assertIs(type(response['choices'][0]['message']['content']), str)
