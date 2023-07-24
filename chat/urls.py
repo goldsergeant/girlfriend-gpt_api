@@ -1,7 +1,6 @@
 from django.urls import path
-
-from chat import views
+from chat.views import SendMessageView
 
 urlpatterns = [
-    # path("", views.index, name="index"),
+    path('boyfriend/message/', SendMessageView.as_view(),name='boyfriend_message')
 ]
