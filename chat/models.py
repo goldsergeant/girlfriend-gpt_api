@@ -12,13 +12,12 @@ class Character(models.Model):
     name=models.CharField(max_length=100)
     system=models.TextField()
 
-
 class Message(models.Model):
     from_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="messages_from_me"
     )
     to_character = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="messages_to_me"
+        Character, on_delete=models.CASCADE, related_name="messages_to_character"
     )
     content = models.CharField(max_length=512)
     timestamp = models.DateTimeField(auto_now_add=True)
