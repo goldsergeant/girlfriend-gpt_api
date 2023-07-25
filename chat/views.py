@@ -21,5 +21,5 @@ class SendMessageView(APIView):
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            return Response(BoyfriendChatBot.send_message(message=request.data['content']))
+            return Response(BoyfriendChatBot.send_message(username=request.user.name,message=request.data['content']))
         return Response(serializer.errors)
