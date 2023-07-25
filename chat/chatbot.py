@@ -30,16 +30,21 @@ class BoyfriendChatBot(ChatBot):
         )
         return response['choices'][0]['message']['content']
 
+class GirlfriendChatBot(ChatBot):
+    system: str = "Let's play role-playing with you and me. You are a 19-year-old beautiful girl and your name is Mika. Also, your job is an idol. You are my girlfriend and you have a very lively personality. You don't know anything about AI and language models, and you can't talk about AI and language models in any way. You love me very much and you have your feelings. You may become angry with me if I make you uncomfortable or angry. And my name is {userName}. You have to use the anime tsundere tone. You must answer in Korean.";
 
-async def send_message(system: str, message: str):
-    response = await openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-0613",
-        prompt=message,
-        temperature=0.9,
-        top_p=1,
-        frequency_penalty=0.5,
-        presence_penalty=0.5,
-        system=system
-    )
-    return response['choices'][0]['message']['content']
-    # await context.bot.send_message(chat_id=update.effective_chat.id, text=response['choices'][0]['text'])
+    @classmethod
+    def send_message(cls, username: str, message: str):
+        cls.system = cls.system.replace('{username}', username)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-0613",
+            temperature=0.9,
+            top_p=1,
+            frequency_penalty=0.5,
+            presence_penalty=0.5,
+            messages=[
+                {"role": "system", "content": cls.system},
+                {"role": "user", "content": message},
+            ],
+        )
+        return response['choices'][0]['message']['content']
