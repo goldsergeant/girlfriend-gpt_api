@@ -10,7 +10,7 @@ from chat.models import Message
 class SendMessageSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Message
-        fields = '__all__'
+        fields = ['content']
 
     def validate(self, attrs) -> str:
         content: str = attrs.get('content', None)
