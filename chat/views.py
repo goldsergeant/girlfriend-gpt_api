@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers
@@ -21,5 +22,5 @@ class SendMessageView(APIView):
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            return Response(BoyfriendChatBot.send_message(username=request.user.name,message=request.data['content']))
+            return JsonResponse({'message':BoyfriendChatBot.send_message(username=request.user.name,message=request.data['content'])})
         return Response(serializer.errors)
