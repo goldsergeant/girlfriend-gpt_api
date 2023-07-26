@@ -118,3 +118,22 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
             raise ValidationError(detail='password is not correct')
 
         return data
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+    )
+
+    name =serializers.CharField(
+        required=False
+    )
+    class Meta(object):
+        model=User
+        exclude=['password']
+
+    def validate(self, attrs):
+        email=attrs.get('email',None)
+        if not User.objects.filter(email=email).exists():
+            raise AuthenticationFailed(detail="user is not exists")
+
+        return User.objects.get(email=email)

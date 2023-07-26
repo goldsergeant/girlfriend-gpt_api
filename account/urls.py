@@ -6,7 +6,7 @@ from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView,TokenObtainPairView
-from account.views import UserSignupView, MyTokenObtainPairView, UserPasswordChangeView
+from account.views import UserSignupView, MyTokenObtainPairView, UserPasswordChangeView,UserNameUpdateView,user_info
 
 
 schema_view = get_schema_view(openapi.Info(
@@ -24,5 +24,7 @@ urlpatterns = [
     # path('signin/',TokenObtainPairView.as_view()),
     path('signin/',MyTokenObtainPairView.as_view()),
     path('signup/', UserSignupView.as_view(),name='signup'),
-    path('password/',UserPasswordChangeView.as_view(),name='change_password')
+    path('password/',UserPasswordChangeView.as_view(),name='change_password'),
+    path('user/name',UserNameUpdateView.as_view(),name='update_name'),
+    path('user/info',user_info,name='get_user_info')
 ]
