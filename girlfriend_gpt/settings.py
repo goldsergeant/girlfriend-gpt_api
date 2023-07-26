@@ -68,13 +68,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    # 'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth.registration',
     'girlfriend',
     'account',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'chat',
     'drf_spectacular',
     'drf_spectacular_sidecar',  # required for Django collectstatic discovery
+    'dj_rest_auth',
 ]
 
 MIDDLEWARE = [
@@ -223,4 +231,12 @@ SWAGGER_SETTINGS = {
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
+# 사이트는 1개만 사용할 것이라고 명시
+SITE_ID = 1
+REST_USE_JWT = True
 AUTH_USER_MODEL = 'account.User'
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
