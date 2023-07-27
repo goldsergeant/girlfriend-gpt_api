@@ -126,7 +126,6 @@ def google_callback(request):
 
     ### 1-3. 성공 시 access_token 가져오기
     access_token = token_req_json.get('access_token')
-    #################################################################
 
     # 2. 가져온 access_token으로 이메일값을 구글에 요청
     email_req = requests.get(f"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={access_token}")
@@ -146,10 +145,8 @@ def google_callback(request):
 
     # 3. 전달받은 이메일, access_token, code를 바탕으로 회원가입/로그인
     try:
-        # 전달받은 이메일로 등록된 유저가 있는지 탐색
         user = User.objects.get(email=email)
 
-        # FK로 연결되어 있는 socialaccount 테이블에서 해당 이메일의 유저가 있는지 확인
         social_user = SocialAccount.objects.get(user=user)
 
         # 있는데 구글계정이 아니어도 에러
