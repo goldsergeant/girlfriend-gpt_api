@@ -232,7 +232,7 @@ SWAGGER_SETTINGS = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # 사이트는 1개만 사용할 것이라고 명시
-SITE_ID = 1
+SITE_ID = 2
 REST_USE_JWT = True
 AUTH_USER_MODEL = 'account.User'
 

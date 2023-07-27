@@ -87,23 +87,24 @@ def user_info(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
+from allauth.socialaccount.providers.google import views as google_view
+
 
 
 class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Grant, use this
-    adapter_class = GoogleOAuth2Adapter
-    BASE_URL = 'http://localhost:8000/'
+    adapter_class = google_view.GoogleOAuth2Adapter
     GOOGLE_CALLBACK_URI = BASE_URL + 'auth/google/callback/'
     client_class = OAuth2Client
 
 
 def google_login(request):
-    scope = "https://www.googleapis.com/auth/userinfo.email"
+    # scope = "https://www.googleapis.com/auth/userinfo.email"
     client_id = os.environ.get("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
     return redirect(
-        f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}")
+    f'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={GOOGLE_CALLBACK_URI}&prompt=consent&response_type=code&client_id={client_id}&scope=openid%20email%20profile&access_type=offline'
+    )
 
 
 def google_callback(request):
@@ -125,7 +126,6 @@ def google_callback(request):
 
     ### 1-3. 성공 시 access_token 가져오기
     access_token = token_req_json.get('access_token')
-
     #################################################################
 
     # 2. 가져온 access_token으로 이메일값을 구글에 요청
@@ -158,7 +158,7 @@ def google_callback(request):
 
         # 이미 Google로 제대로 가입된 유저 => 로그인 & 해당 우저의 jwt 발급
         data = {'access_token': access_token, 'code': code}
-        accept = requests.post(f"{BASE_URL}api/user/google/login/finish/", data=data)
+        accept = requests.post(f"{BASE_URL}/auth/google/login/finish/", data=data)
         accept_status = accept.status_code
 
         # 뭔가 중간에 문제가 생기면 에러
@@ -172,7 +172,7 @@ def google_callback(request):
     except User.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
         data = {'access_token': access_token, 'code': code}
-        accept = requests.post(f"{BASE_URL}/auth/google/login/finish/", data=data)
+        accept = requests.post(f"{BASE_URL}auth/google/login/finish/", data=data)
         accept_status = accept.status_code
 
         # 뭔가 중간에 문제가 생기면 에러
