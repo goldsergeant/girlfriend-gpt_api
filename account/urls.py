@@ -1,13 +1,13 @@
 from collections import OrderedDict
 
-from django.urls import path
+from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.generators import OpenAPISchemaGenerator
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView,TokenObtainPairView
-from account.views import UserSignupView, MyTokenObtainPairView, UserPasswordChangeView,UserNameUpdateView,user_info
-
+from account.views import UserSignupView, MyTokenObtainPairView, UserPasswordChangeView, UserNameUpdateView, user_info, \
+    GoogleLogin, google_login, google_callback
 
 schema_view = get_schema_view(openapi.Info(
     title="GirlfriendGPT API",
@@ -25,6 +25,9 @@ urlpatterns = [
     path('signin/',MyTokenObtainPairView.as_view()),
     path('signup/', UserSignupView.as_view(),name='signup'),
     path('password/',UserPasswordChangeView.as_view(),name='change_password'),
-    path('user/name',UserNameUpdateView.as_view(),name='update_name'),
-    path('user/info',user_info,name='get_user_info')
+    path('user/name/',UserNameUpdateView.as_view(),name='update_name'),
+    path('user/info/',user_info,name='get_user_info'),
+    path('google/callback/', google_callback, name='google_callback'),
+    path('google/login/',google_login,name='google_login'),
+    path('google/login/finish/', GoogleLogin.as_view(),name='google_finish')
 ]

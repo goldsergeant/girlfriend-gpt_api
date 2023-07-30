@@ -68,14 +68,33 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'account.apps.AccountConfig',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     'girlfriend',
-    'account',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'chat',
     'drf_spectacular',
     'drf_spectacular_sidecar',  # required for Django collectstatic discovery
 ]
+
+# 사이트는 1개만 사용할 것이라고 명시
+SITE_ID = 2
+REST_USE_JWT = True
+AUTH_USER_MODEL = 'my_account.User'
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -177,8 +196,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
@@ -223,4 +242,3 @@ SWAGGER_SETTINGS = {
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-AUTH_USER_MODEL = 'account.User'
