@@ -3,6 +3,7 @@ from json import JSONDecodeError
 
 import requests
 from allauth.socialaccount.models import SocialAccount
+from django.contrib.auth.base_user import BaseUserManager
 from django.shortcuts import redirect
 from drf_spectacular.utils import extend_schema_view, extend_schema, inline_serializer
 from rest_framework import status, serializers
@@ -11,8 +12,10 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed, TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.http import JsonResponse
+from django.contrib.auth.hashers import make_password
 
 from account.models import User
 from account.serializers import UserJWTSignupSerializer, MyTokenObtainPairSerializer, PasswordChangeSerializer, \
@@ -95,16 +98,15 @@ from allauth.socialaccount.providers.google import views as google_view
 
 class GoogleLogin(SocialLoginView):  # if you want to use Authorization Code Grant, use this
     adapter_class = google_view.GoogleOAuth2Adapter
-    GOOGLE_CALLBACK_URI = BASE_URL + 'auth/google/callback/'
+    callback_url = GOOGLE_CALLBACK_URI
     client_class = OAuth2Client
 
 
 def google_login(request):
-    # scope = "https://www.googleapis.com/auth/userinfo.email"
+    scope = "https://www.googleapis.com/auth/userinfo.email"
     client_id = os.environ.get("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
     return redirect(
-    f'https://accounts.google.com/o/oauth2/v2/auth?redirect_uri={GOOGLE_CALLBACK_URI}&prompt=consent&response_type=code&client_id={client_id}&scope=openid%20email%20profile&access_type=offline'
-    )
+        f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}")
 
 
 def google_callback(request):
@@ -155,16 +157,18 @@ def google_callback(request):
 
         # 이미 Google로 제대로 가입된 유저 => 로그인 & 해당 우저의 jwt 발급
         data = {'access_token': access_token, 'code': code}
-        accept = requests.post(f"{BASE_URL}/auth/google/login/finish/", data=data)
+        accept = requests.post(f"{BASE_URL}auth/google/login/finish/", data=data)
         accept_status = accept.status_code
 
         # 뭔가 중간에 문제가 생기면 에러
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
 
-        accept_json = accept.json()
-        accept_json.pop('user', None)
-        return JsonResponse(accept_json)
+        token=RefreshToken.for_user(user)
+        response={}
+        response['access']=str(token.access_token)
+        response['refresh']=str(token)
+        return JsonResponse(response)
 
     except User.DoesNotExist:
         # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
@@ -176,9 +180,18 @@ def google_callback(request):
         if accept_status != 200:
             return JsonResponse({'error_message': 'failed to signup'}, status=accept_status)
 
-        accept_json = accept.json()
-        accept_json.pop('user', None)
-        return JsonResponse(accept_json)
+        user = User.objects.get(email=email)
+
+        token = RefreshToken.for_user(user)
+        response = {}
+        response['access'] = str(token.access_token)
+        response['refresh'] = str(token)
+        return JsonResponse(response)
+        # token=RefreshToken.for_user(user)
+        # response={}
+        # response['access_token'] = str(token.access_token)
+        # response['refresh_token'] = str(token)
+        # return JsonResponse(response)
 
     except SocialAccount.DoesNotExist:
         # User는 있는데 SocialAccount가 없을 때 (=일반회원으로 가입된 이메일일때)

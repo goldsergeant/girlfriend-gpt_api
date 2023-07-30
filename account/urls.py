@@ -25,10 +25,8 @@ urlpatterns = [
     path('signin/',MyTokenObtainPairView.as_view()),
     path('signup/', UserSignupView.as_view(),name='signup'),
     path('password/',UserPasswordChangeView.as_view(),name='change_password'),
-    path('user/name',UserNameUpdateView.as_view(),name='update_name'),
-    path('user/info',user_info,name='get_user_info'),
-    path('dj-rest-auth/', include('dj_rest_auth.urls')),
-    path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('user/name/',UserNameUpdateView.as_view(),name='update_name'),
+    path('user/info/',user_info,name='get_user_info'),
     path('google/callback/', google_callback, name='google_callback'),
     path('google/login/',google_login,name='google_login'),
     path('google/login/finish/', GoogleLogin.as_view(),name='google_finish')
