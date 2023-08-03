@@ -69,6 +69,7 @@ class UserPasswordChangeView(APIView):
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
     serializer_class = MyTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
