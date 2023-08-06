@@ -28,13 +28,14 @@ class UserJWTSignupSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = User
-        fields = ['email', 'password']
+        fields = ['email','name', 'password']
 
     def create(self, validated_data):
         user = User.objects.create(  # User 생성
             email=validated_data['email'],
         )
         user.set_password(validated_data['password'])
+        user.name=validated_data['name']
         user.save()
         return user
 
