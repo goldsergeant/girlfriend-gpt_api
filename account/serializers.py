@@ -26,25 +26,16 @@ class UserJWTSignupSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'}
     )
 
-    name = serializers.CharField(
-        required=False,
-        write_only=True
-    )
-
-    subscription_date = serializers.DateField(
-        required=False,
-        write_only=True,
-    )
-
     class Meta(object):
         model = User
-        fields = ['email', 'password', 'name', 'subscription_date']
+        fields = ['email','name', 'password']
 
     def create(self, validated_data):
         user = User.objects.create(  # User 생성
             email=validated_data['email'],
         )
         user.set_password(validated_data['password'])
+        user.name=validated_data['name']
         user.save()
         return user
 
