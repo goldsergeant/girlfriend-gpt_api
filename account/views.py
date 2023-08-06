@@ -177,6 +177,9 @@ def google_callback(request):
         accept = requests.post(f"{BASE_URL}auth/google/login/finish/", data=data)
         accept_status = accept.status_code
 
+        # social_user_info_scope='https://www.googleapis.com/auth/userinfo.profile'
+        # social_user_info=requests.get(f"https://www.googleapis.com/oauth2/v1/userinfo?access_token={access_token}&scope={social_user_info_scope}")
+
         # 뭔가 중간에 문제가 생기면 에러
         if accept_status != 200:
             return JsonResponse({'error_message': 'failed to signup'}, status=accept_status)

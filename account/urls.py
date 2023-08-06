@@ -29,5 +29,5 @@ urlpatterns = [
     path('user/info/',user_info,name='get_user_info'),
     path('google/callback/', google_callback, name='google_callback'),
     path('google/login/',google_login,name='google_login'),
-    path('google/login/finish/', GoogleLogin.as_view(),name='google_finish')
+    path('google/login/finish/', GoogleLogin.as_view(),name='google_finish'),
 ]
