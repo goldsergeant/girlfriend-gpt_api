@@ -125,7 +125,7 @@ def google_callback(request):
 
     ### 1-2. 에러 발생 시 종료
     if error is not None:
-        raise JSONDecodeError(error)
+        return JsonResponse({"error_message":error}, status=status.HTTP_400_BAD_REQUEST)
 
     ### 1-3. 성공 시 access_token 가져오기
     access_token = token_req_json.get('access_token')
