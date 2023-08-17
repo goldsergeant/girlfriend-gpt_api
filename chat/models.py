@@ -9,7 +9,7 @@ from django.db import models
 User = get_user_model()
 
 class Character(models.Model):
-    name=models.CharField(max_length=100)
+    name=models.CharField(max_length=100,unique=True)
     system=models.TextField()
     GENDERS = (
         ('M', '남성(Man)'),
