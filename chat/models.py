@@ -8,15 +8,19 @@ from django.db import models
 
 User = get_user_model()
 
+
 class Character(models.Model):
-    name=models.CharField(max_length=100,unique=True)
-    system=models.TextField()
+    name = models.CharField(max_length=100, unique=True)
+    system = models.TextField()
     GENDERS = (
         ('M', '남성(Man)'),
         ('W', '여성(Woman)'),
     )
     gender = models.CharField(verbose_name='성별', max_length=1, choices=GENDERS)
     image = models.ImageField(upload_to='character', null=True)
+    send_url = models.CharField(max_length=100)
+
+
 class Message(models.Model):
     from_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="messages_from_me"

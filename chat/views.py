@@ -13,7 +13,10 @@ from chat.chatbot import ChatBot
 
 # Create your views here.
 class SendMessageToCharlesfriendView(APIView):
-    charles = Character.objects.get(name='Charles')
+    try:
+        charles = Character.objects.get(name='Charles')
+    except Character.DoesNotExist:
+        charles=None
     @extend_schema(
         request=inline_serializer(
             name='SendMessageSerializer',
@@ -30,8 +33,10 @@ class SendMessageToCharlesfriendView(APIView):
         return Response(serializer.errors)
 
 class SendMessageToMikaView(APIView):
-    mika = Character.objects.get(name='Mika')
-
+    try:
+        mika = Character.objects.get(name='Mika')
+    except Character.DoesNotExist:
+        mika=None
     @extend_schema(
         request=inline_serializer(
             name='SendMessageSerializer',
