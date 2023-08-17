@@ -1,12 +1,13 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import serializers
+from rest_framework import serializers, mixins, generics
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from chat.models import Character
-from chat.serializer import SendMessageSerializer
+from chat.serializer import SendMessageSerializer, CharacterSerializer
 from chat.chatbot import ChatBot
 
 
@@ -46,3 +47,12 @@ class SendMessageToMikaView(APIView):
             return JsonResponse(
                 {'message': chatbot.send_message(username=request.user.name, message=request.data['content'])})
         return Response(serializer.errors)
+
+
+class CharacterListView(mixins.ListModelMixin,generics.GenericAPIView):
+
+    queryset = Character.objects.all()
+    serializer_class = CharacterSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
