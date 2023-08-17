@@ -4,13 +4,15 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from chat.models import Character
 from chat.serializer import SendMessageSerializer
-from .chatbot import BoyfriendChatBot, GirlfriendChatBot
+from chat.chatbot import ChatBot
 
 
 # Create your views here.
-class SendMessageToBoyfriendView(APIView):
-
+class SendMessageToCharlesfriendView(APIView):
+    charles = Character.objects.get(name='Charles')
     @extend_schema(
         request=inline_serializer(
             name='SendMessageSerializer',
@@ -21,11 +23,13 @@ class SendMessageToBoyfriendView(APIView):
     )
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
+        chatbot=ChatBot(character=self.charles)
         if serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message':BoyfriendChatBot.send_message(username=request.user.name,message=request.data['content'])})
+            return JsonResponse({'message':chatbot.send_message(username=request.user.name,message=request.data['content'])})
         return Response(serializer.errors)
 
-class SendMessageToGirlfriendView(APIView):
+class SendMessageToMikaView(APIView):
+    mika = Character.objects.get(name='Mika')
 
     @extend_schema(
         request=inline_serializer(
@@ -37,6 +41,8 @@ class SendMessageToGirlfriendView(APIView):
     )
     def post(self, request):
         serializer = SendMessageSerializer(data=request.data)
+        chatbot = ChatBot(character=self.mika)
         if serializer.is_valid(raise_exception=True):
-            return JsonResponse({'message':GirlfriendChatBot.send_message(username=request.user.name,message=request.data['content'])})
+            return JsonResponse(
+                {'message': chatbot.send_message(username=request.user.name, message=request.data['content'])})
         return Response(serializer.errors)
