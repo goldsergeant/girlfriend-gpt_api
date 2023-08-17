@@ -16,6 +16,7 @@ class Character(models.Model):
         ('W', '여성(Woman)'),
     )
     gender = models.CharField(verbose_name='성별', max_length=1, choices=GENDERS)
+    image = models.ImageField(upload_to='character', null=True)
 class Message(models.Model):
     from_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="messages_from_me"
