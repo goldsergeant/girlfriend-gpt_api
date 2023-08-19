@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers, mixins, generics
+from rest_framework.permissions import AllowAny
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -55,6 +56,7 @@ class SendMessageToMikaView(APIView):
 
 
 class CharacterListView(mixins.ListModelMixin,generics.GenericAPIView):
+    permission_classes = [AllowAny]
 
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
